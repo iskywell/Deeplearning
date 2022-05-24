@@ -60,3 +60,19 @@ class FixedHiddenMLP(nn.Module):
         while X.abs().sum() > 1:
             X /= 2
         return X.sum()
+
+# 所有方法混合使用
+class NestMLP(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.net = nn.Sequential(nn.Linear(20, 64), nn.ReLU(),
+                                 nn.Linear(64, 32), nn.ReLU())
+        self.linear = nn.Linear(32, 16)
+
+    def forward(self, X):
+        return self.linear(self.net(X))
+
+chimera = nn.Sequential(NestMLP(), nn.Linear(16, 20), FixedHiddenMLP())
+
+
+# chimera(X)
